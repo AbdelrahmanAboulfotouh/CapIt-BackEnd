@@ -10,4 +10,7 @@ public interface UsersRepository extends CrudRepository<User, UUID> {
     @Query("select * from users where email = :email")
     Optional<User> findUserByEmail(String email);
 
+    @Query("select * from users where phone = :phone")
+    Optional<User> findUserByPhone(String phone);
+
 }
