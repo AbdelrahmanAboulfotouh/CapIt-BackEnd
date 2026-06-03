@@ -1,6 +1,7 @@
 package org.example.capitbackend.controllers;
 
 import org.example.capitbackend.model.SignupRequest;
+import org.example.capitbackend.model.SignupResponse;
 import org.example.capitbackend.services.AuthService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,9 +19,9 @@ public class UserController
     }
 
     @PostMapping("/sign-up")
-    public void signupNewUser(@RequestBody SignupRequest signupRequest)
+    public SignupResponse signupNewUser(@RequestBody SignupRequest signupRequest)
     {
-        authService.signup(signupRequest);
+        return authService.signup(signupRequest);
 
     }
 
