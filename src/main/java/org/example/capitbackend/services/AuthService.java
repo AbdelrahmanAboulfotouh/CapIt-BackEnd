@@ -4,16 +4,20 @@ import java.util.UUID;
 import org.example.capitbackend.model.SignupRequest;
 import org.example.capitbackend.model.User;
 import org.example.capitbackend.repositories.UsersRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
     private final UsersRepository usersRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthService(UsersRepository usersRepository) {
+
+    public AuthService(UsersRepository usersRepository, PasswordEncoder passwordEncoder) {
         this.usersRepository = usersRepository;
+        this.passwordEncoder = passwordEncoder;
     }
-    public void signup(SignupRequest request) throws IllegalArgumentException
+    public String signup(SignupRequest request) throws IllegalArgumentException
     {
 
         if (!request.getPassword().equals(request.getConfirmPassword()))
@@ -39,10 +43,14 @@ public class AuthService {
         else
             newUser.setPhone(request.getPhoneNumber());
         // hash password is required
+        String hashedPassword = passwordEncoder.encode(request.getPassword());
+        newUser.setPasswordHash(hashedPassword);
 
         // save user
         this.saveAccount(newUser);
         usersRepository.updateLastActive(newUser.getId());
+
+        return "User created successfully";
 
     }
     public void saveAccount(User newUser)
