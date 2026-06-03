@@ -29,33 +29,31 @@ public class AuthService {
         newUser.setId(UUID.randomUUID());
 
         newUser.setFirstName(request.getFirstName());
-        newUser.setLastName(request.getFirstName());
+        newUser.setLastName(request.getLastName());
 
         // email uniqueness check
         if(usersRepository.findUserByEmail(request.getEmail()).isPresent())
             throw  new IllegalArgumentException("Email already exists");
-        else
-            newUser.setEmail(request.getEmail());
+        newUser.setEmail(request.getEmail());
 
         // phone uniqueness check
         if(usersRepository.findUserByPhone(request.getPhoneNumber()).isPresent())
             throw  new IllegalArgumentException("Phone Number  already exists");
-        else
-            newUser.setPhone(request.getPhoneNumber());
+        newUser.setPhone(request.getPhoneNumber());
+
         // hash password is required
         String hashedPassword = passwordEncoder.encode(request.getPassword());
         newUser.setPasswordHash(hashedPassword);
 
         // save user
         this.saveAccount(newUser);
-        usersRepository.updateLastActive(newUser.getId());
 
         return "User created successfully";
 
     }
-    public void saveAccount(User newUser)
+    private void saveAccount(User newUser)
     {
-
+        usersRepository.updateLastActive(newUser.getId());
         usersRepository.save(newUser);
     }
 
