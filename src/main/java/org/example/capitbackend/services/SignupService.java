@@ -1,6 +1,7 @@
 package org.example.capitbackend.services;
 
 import java.util.Optional;
+import java.util.UUID;
 import org.example.capitbackend.model.SignupRequest;
 import org.example.capitbackend.model.User;
 import org.example.capitbackend.repositories.UsersRepository;
@@ -22,6 +23,8 @@ public class SignupService {
         }
         User newUser = new User();
         newUser.setRole("customer");
+        newUser.setId(UUID.randomUUID());
+
         newUser.setFirstName(request.getFirstName());
         newUser.setLastName(request.getFirstName());
 
