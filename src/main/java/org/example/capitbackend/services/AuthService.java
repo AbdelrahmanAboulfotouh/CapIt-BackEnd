@@ -1,6 +1,5 @@
 package org.example.capitbackend.services;
 
-import java.util.Optional;
 import java.util.UUID;
 import org.example.capitbackend.model.SignupRequest;
 import org.example.capitbackend.model.User;
@@ -8,10 +7,10 @@ import org.example.capitbackend.repositories.UsersRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SignupService {
+public class AuthService {
     private final UsersRepository usersRepository;
 
-    public SignupService(UsersRepository usersRepository) {
+    public AuthService(UsersRepository usersRepository) {
         this.usersRepository = usersRepository;
     }
     public void signup(SignupRequest request) throws IllegalArgumentException

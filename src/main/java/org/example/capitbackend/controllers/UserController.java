@@ -1,10 +1,7 @@
 package org.example.capitbackend.controllers;
 
-import jakarta.validation.Valid;
 import org.example.capitbackend.model.SignupRequest;
-import org.example.capitbackend.model.User;
-import org.example.capitbackend.services.SignupService;
-import org.springframework.http.ResponseEntity;
+import org.example.capitbackend.services.AuthService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,16 +11,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping
 public class UserController
 {
-    private final SignupService signupService;
+    private final AuthService authService;
 
-    public UserController(SignupService signupService) {
-        this.signupService = signupService;
+    public UserController(AuthService authService) {
+        this.authService = authService;
     }
 
     @PostMapping("/sign-up")
     public void signupNewUser(@RequestBody SignupRequest signupRequest)
     {
-        signupService.signup(signupRequest);
+        authService.signup(signupRequest);
 
     }
 
