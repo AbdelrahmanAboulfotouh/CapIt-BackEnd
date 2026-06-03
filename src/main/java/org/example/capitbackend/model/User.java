@@ -4,10 +4,12 @@
             import java.util.UUID;
             import org.springframework.data.annotation.Id;
             import org.springframework.data.annotation.ReadOnlyProperty;
+            import org.springframework.data.annotation.Transient;
+            import org.springframework.data.domain.Persistable;
             import org.springframework.data.relational.core.mapping.Table;
 
 @Table("users")
-public class User {
+public class User  implements Persistable<UUID> {
 
     @Id
     private UUID id;
@@ -28,9 +30,15 @@ public class User {
 
     private OffsetDateTime lastActiveAt;
 
-
+    @Override
     public UUID getId() {
         return id;
+    }
+    @Transient
+    private boolean isNew = true;
+    @Override
+    public boolean isNew() {
+        return isNew;
     }
 
     public void setId(UUID id) {
