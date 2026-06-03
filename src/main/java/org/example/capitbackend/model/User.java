@@ -1,9 +1,10 @@
-package org.example.capitbackend.model;
+            package org.example.capitbackend.model;
 
-import java.time.OffsetDateTime;
-import java.util.UUID;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
+            import java.time.OffsetDateTime;
+            import java.util.UUID;
+            import org.springframework.data.annotation.Id;
+            import org.springframework.data.annotation.ReadOnlyProperty;
+            import org.springframework.data.relational.core.mapping.Table;
 
 @Table("users")
 public class User {
@@ -22,7 +23,7 @@ public class User {
     private String passwordHash;
 
     private String role;
-
+    @ReadOnlyProperty
     private OffsetDateTime createdAt;
 
     private OffsetDateTime lastActiveAt;
@@ -87,9 +88,7 @@ public class User {
         return createdAt;
     }
 
-    public void setCreatedAt(OffsetDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+
 
     public OffsetDateTime getLastActiveAt() {
         return lastActiveAt;
