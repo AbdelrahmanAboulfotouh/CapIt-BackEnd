@@ -1,11 +1,15 @@
 package org.example.capitbackend.services;
 
+import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 import org.example.capitbackend.model.SignupRequest;
+import org.example.capitbackend.model.SignupResponse;
 import org.example.capitbackend.model.User;
 import org.example.capitbackend.repositories.UsersRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthService {
@@ -17,7 +21,8 @@ public class AuthService {
         this.usersRepository = usersRepository;
         this.passwordEncoder = passwordEncoder;
     }
-    public String signup(SignupRequest request) throws IllegalArgumentException
+    @Transactional
+    public SignupResponse signup(SignupRequest request) throws IllegalArgumentException
     {
 
         if (!request.getPassword().equals(request.getConfirmPassword()))
@@ -48,12 +53,13 @@ public class AuthService {
         // save user
         this.saveAccount(newUser);
 
-        return "User created successfully";
+        return new SignupResponse(newUser.getId(),newUser.getEmail());
 
     }
-    private void saveAccount(User newUser)
+    @Transactional
+    protected void saveAccount(User newUser)
     {
-        usersRepository.updateLastActive(newUser.getId());
+        newUser.setLastActiveAt(OffsetDateTime.now());
         usersRepository.save(newUser);
     }
 

@@ -14,9 +14,6 @@ public interface UsersRepository extends CrudRepository<User, UUID> {
     @Query("select * from users where phone = :phone")
     Optional<User> findUserByPhone(String phone);
 
-    @Modifying
-    @Query(" UPDATE users SET last_active_at = now() WHERE id = :userId ")
-    void updateLastActive(UUID userId);
 
 
 }
