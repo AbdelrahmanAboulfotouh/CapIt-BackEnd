@@ -43,6 +43,8 @@ public class SignupService {
 
         // save user
         this.saveAccount(newUser);
+        usersRepository.updateLastActive(newUser.getId());
+
     }
     public void saveAccount(User newUser)
     {
