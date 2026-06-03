@@ -30,7 +30,7 @@ public class AuthService {
             throw new IllegalArgumentException("Password and confirm password do not match");
         }
         User newUser = new User();
-        newUser.setRole("customer");
+        newUser.setRole("USER");
         newUser.setId(UUID.randomUUID());
 
         newUser.setFirstName(request.getFirstName());
