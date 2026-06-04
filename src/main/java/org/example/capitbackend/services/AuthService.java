@@ -1,0 +1,66 @@
+package org.example.capitbackend.services;
+
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.util.UUID;
+import org.example.capitbackend.model.SignupRequest;
+import org.example.capitbackend.model.SignupResponse;
+import org.example.capitbackend.model.User;
+import org.example.capitbackend.repositories.UsersRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class AuthService {
+    private final UsersRepository usersRepository;
+    private final PasswordEncoder passwordEncoder;
+
+
+    public AuthService(UsersRepository usersRepository, PasswordEncoder passwordEncoder) {
+        this.usersRepository = usersRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+    @Transactional
+    public SignupResponse signup(SignupRequest request) throws IllegalArgumentException
+    {
+
+        if (!request.getPassword().equals(request.getConfirmPassword()))
+        {
+            throw new IllegalArgumentException("Password and confirm password do not match");
+        }
+        User newUser = new User();
+        newUser.setRole("USER");
+        newUser.setId(UUID.randomUUID());
+
+        newUser.setFirstName(request.getFirstName());
+        newUser.setLastName(request.getLastName());
+
+        // email uniqueness check
+        if(usersRepository.findUserByEmail(request.getEmail()).isPresent())
+            throw  new IllegalArgumentException("Email already exists");
+        newUser.setEmail(request.getEmail());
+
+        // phone uniqueness check
+        if(usersRepository.findUserByPhone(request.getPhoneNumber()).isPresent())
+            throw  new IllegalArgumentException("Phone Number  already exists");
+        newUser.setPhone(request.getPhoneNumber());
+
+        // hash password is required
+        String hashedPassword = passwordEncoder.encode(request.getPassword());
+        newUser.setPasswordHash(hashedPassword);
+
+        // save user
+        this.saveAccount(newUser);
+
+        return new SignupResponse(newUser.getId(),newUser.getEmail());
+
+    }
+    @Transactional
+    protected void saveAccount(User newUser)
+    {
+        newUser.setLastActiveAt(OffsetDateTime.now());
+        usersRepository.save(newUser);
+    }
+
+}
