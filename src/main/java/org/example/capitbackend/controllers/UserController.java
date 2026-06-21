@@ -1,5 +1,6 @@
 package org.example.capitbackend.controllers;
 
+import jakarta.validation.Valid;
 import org.example.capitbackend.model.SignupRequest;
 import org.example.capitbackend.model.SignupResponse;
 import org.example.capitbackend.services.AuthService;
@@ -19,7 +20,7 @@ public class UserController
     }
 
     @PostMapping("/sign-up")
-    public SignupResponse signupNewUser(@RequestBody SignupRequest signupRequest)
+    public SignupResponse signupNewUser(@Valid @RequestBody SignupRequest signupRequest)
     {
         return authService.signup(signupRequest);
 
