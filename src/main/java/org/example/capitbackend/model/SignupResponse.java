@@ -6,12 +6,14 @@ public class SignupResponse {
 
     private   UUID userId;
     private   String email;
+    private   String token;
 
     public SignupResponse(){}
-    public SignupResponse(UUID userId, String email)
+    public SignupResponse(UUID userId, String email, String token)
     {
         this.userId = userId;
         this.email = email;
+        this.token = token;
     }
 
     public UUID getUserId() {
@@ -28,5 +30,12 @@ public class SignupResponse {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

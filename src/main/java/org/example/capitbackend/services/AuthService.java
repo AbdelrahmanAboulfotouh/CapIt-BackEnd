@@ -15,11 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
     private final UsersRepository usersRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
-
-    public AuthService(UsersRepository usersRepository, PasswordEncoder passwordEncoder) {
+    public AuthService(UsersRepository usersRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
         this.usersRepository = usersRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
     @Transactional
     public SignupResponse signup(SignupRequest request) throws IllegalArgumentException
@@ -53,7 +54,10 @@ public class AuthService {
         // save user
         this.saveAccount(newUser);
 
-        return new SignupResponse(newUser.getId(),newUser.getEmail());
+        // issue a JWT for the newly created account
+        String token = jwtService.generateToken(newUser.getId().toString());
+
+        return new SignupResponse(newUser.getId(),newUser.getEmail(), token);
 
     }
     @Transactional
