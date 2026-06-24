@@ -6,6 +6,7 @@ import org.example.capitbackend.model.SignupRequest;
 import org.example.capitbackend.model.SignupResponse;
 import org.example.capitbackend.services.AuthService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +36,16 @@ public class UserController
         return authService.login(loginRequest);
     }
 
-
+    /* JWTs issued by this app are stateless and not tracked server-side, so there is
+         no token to revoke here. This endpoint just confirms the caller is currently
+         authenticated and acknowledges the logout; the client is responsible for
+         discarding its token afterward.
+      */
+    @PostMapping("/sign-out")
+    public ResponseEntity<Void> logout()
+    {
+        authService.logout();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 
 }
