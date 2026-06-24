@@ -11,9 +11,13 @@ import org.example.capitbackend.model.User;
 import org.example.capitbackend.repositories.UsersRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class AuthService {
@@ -92,7 +96,23 @@ public class AuthService {
 
         return new SignupResponse(user.getId(), user.getEmail(), token);
     }
+    /* Logs out the currently authenticated user.
+          JWTs issued by this service are stateless and are never persisted or tracked
+          server-side, so there is no server-side token to revoke. This method only
+          confirms that the caller is currently authenticated (i.e. presented a valid,
+          unexpired token) and acknowledges the request; the client is responsible for
+          discarding its token afterward.
+       */
+    public void logout() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+        if (authentication == null) {
+            log.warn("Logout failed - no authenticated user in request");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
+        }
+
+        log.info("Logout successful for user {}", authentication.getPrincipal());
+    }
     @Transactional
     protected void saveAccount(User newUser)
     {
