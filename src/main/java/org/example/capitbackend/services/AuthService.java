@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 import org.example.capitbackend.exception.InvalidCredentialsException;
+import org.example.capitbackend.model.CurrentUserResponse;
 import org.example.capitbackend.model.LoginRequest;
 import org.example.capitbackend.model.SignupRequest;
 import org.example.capitbackend.model.SignupResponse;
@@ -12,6 +13,7 @@ import org.example.capitbackend.repositories.UsersRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -112,6 +114,40 @@ public class AuthService {
         }
 
         log.info("Logout successful for user {}", authentication.getPrincipal());
+    }
+    /* Returns the profile of the currently authenticated user.
+      JwtAuthenticationFilter places the user id (taken from the JWT subject
+      claim) into the SecurityContext as the Authentication principal whenever
+      a valid bearer token is present. When no valid token is supplied, Spring
+      Security's default AnonymousAuthenticationFilter still populates the
+      context with an anonymous Authentication rather than leaving it null, so
+      both cases are treated as "not authenticated" here.
+   */
+    public CurrentUserResponse getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+            log.warn("Current user lookup failed - no authenticated user in request");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
+        }
+
+        UUID userId = UUID.fromString((String) authentication.getPrincipal());
+
+        User user = usersRepository.findById(userId)
+                                   .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        log.info("Current user lookup successful for user {}", user.getId());
+
+        return new CurrentUserResponse(
+                user.getId(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.getPhone(),
+                user.getRole(),
+                user.getCreatedAt(),
+                user.getLastActiveAt()
+        );
     }
     @Transactional
     protected void saveAccount(User newUser)
